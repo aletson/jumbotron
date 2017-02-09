@@ -1,0 +1,51 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<h1><center>Jumbotron</center></h1>
+<select class="form-control" id="game-selector">
+<option value=""> 
+</select>
+
+<script>
+
+function loadScoreboard(data) { //defined in jsonp
+    $.each(data.games, function(key, game) {
+        var awayTeam = game.atcommon.toLowerCase();
+        var awayAbbr = game.ata;
+        var homeTeam = game.htcommon.toLowerCase();
+        var homeAbbr = game.hta;
+        var gid = game.id;
+		console.log(gid);
+        $('#game-selector').append($('<option>', {
+            value: gid,
+			
+            //gosh, not having ucfirst is just the absolute worst isn't it
+            text: awayTeam.charAt(0).toUpperCase() + awayTeam.slice(1) + ' @ ' + homeTeam.charAt(0).toUpperCase() + homeTeam.slice(1)
+        }));
+		$('#' + gid).data('home-abbr', homeAbbr).data('away-abbr', awayAbbr); //won't show up in source, that's ok, working as intended
+    });
+}
+
+$(document).ready(function() {
+        console.log('js load');
+        var curDate = new Date();
+        var day = curDate.getDate();
+        var month = curDate.getMonth() + 1;
+        var year = curDate.getFullYear();
+        if (day < 10) {
+                day = '0' + day;
+        }
+        if (month < 10) {
+                month = '0' + month;
+        }
+		$.ajax({
+			url: 'http://live.nhle.com/GameData/GCScoreboard/' + year + '-' + month + '-' + day + '.jsonp',
+			type: 'GET', 
+			dataType: 'jsonp',
+			success: function(data) {
+				
+			}
+		});
+});
+</script>
