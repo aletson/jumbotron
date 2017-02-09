@@ -9,6 +9,16 @@
 
 <script>
 
+var curDate = new Date();
+var day = curDate.getDate();
+var month = curDate.getMonth() + 1;
+var year = curDate.getFullYear();
+if(month > 6) {
+    var seasonStr = '' + year + (year + 1);
+} else {
+    var seasonStr = '' + (year - 1) + year;
+}
+
 function loadScoreboard(data) { //defined in jsonp
     $.each(data.games, function(key, game) {
         var awayTeam = game.atcommon.toLowerCase();
@@ -16,11 +26,9 @@ function loadScoreboard(data) { //defined in jsonp
         var homeTeam = game.htcommon.toLowerCase();
         var homeAbbr = game.hta;
         var gid = game.id;
-		console.log(gid);
-        $('#game-selector').append($('<option>', {
+       $('#game-selector').append($('<option>', {
             value: gid,
-			
-            //gosh, not having ucfirst is just the absolute worst isn't it
+			//gosh, not having ucfirst is just the absolute worst isn't it
             text: awayTeam.charAt(0).toUpperCase() + awayTeam.slice(1) + ' @ ' + homeTeam.charAt(0).toUpperCase() + homeTeam.slice(1)
         }));
 		$('#' + gid).data('home-abbr', homeAbbr).data('away-abbr', awayAbbr); //won't show up in source, that's ok, working as intended
@@ -28,11 +36,6 @@ function loadScoreboard(data) { //defined in jsonp
 }
 
 $(document).ready(function() {
-        console.log('js load');
-        var curDate = new Date();
-        var day = curDate.getDate();
-        var month = curDate.getMonth() + 1;
-        var year = curDate.getFullYear();
         if (day < 10) {
                 day = '0' + day;
         }
@@ -47,5 +50,9 @@ $(document).ready(function() {
 				
 			}
 		});
+});
+
+$('#game-selector').change(function(){
+	var gid = $(this).val();
 });
 </script>
