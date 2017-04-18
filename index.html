@@ -4,6 +4,18 @@
 
 <h1><center>Jumbotron</center></h1>
 <select class="form-control" id="game-selector">
+<div class="score row">
+<div class="col-md-6 text-center away">
+<img id="away-logo" class="logo" src="" />
+<br/>
+<span class="score" id="away-score">
+</div>
+<div class="col-md-6 text-center home">
+<img id="home-logo" class="logo" src="" />
+<br/>
+<span class="score" id="home-score">
+</div>
+</div>
 <option value=""> 
 </select>
 
@@ -19,7 +31,7 @@ if(month > 6) {
     var seasonStr = '' + (year - 1) + year;
 }
 
-function loadScoreboard(data) { //defined in jsonp
+var loadScoreboard = function(data) { //defined in jsonp
     $.each(data.games, function(key, game) {
         var awayTeam = game.atcommon.toLowerCase();
         var awayAbbr = game.ata;
@@ -35,6 +47,35 @@ function loadScoreboard(data) { //defined in jsonp
     });
 }
 
+var playHorn = function(abbr) {
+	var horn = new Audio(abbr + ".ogg");
+	horn.play();
+}
+
+var pollForScores = function() {
+$.ajax({
+		url: 'http://live.nhle.com/GameData/' + seasonStr + '/' + $('#game-selector option:selected').id() + '/gc/gcsb.jsonp',
+		type: 'GET',
+		dataType: 'jsonp',
+		success: function(data) {
+			data.a.tot.g = awayScore;
+			data.h.tot.g = homeScore;
+			if($('#away-score').is(':empty')) {
+				$('#away-score').text(awayScore);
+			} else if(awayScore > $('#away-score').text()) {
+				playHorn($('#game-selector option:selected').data('away-abbr');
+				$('#away-score').text(awayScore);
+			}
+			if($('#home-score').is(':empty')) {
+				$('#home-score').text(homeScore);
+			} else if(awayScore > $('#away-score').text()) {
+				playHorn($('#game-selector option:selected').data('home-abbr');
+				$('#home-score').text(homeScore);
+			}
+			
+		}
+}
+
 $(document).ready(function() {
         if (day < 10) {
                 day = '0' + day;
@@ -47,12 +88,15 @@ $(document).ready(function() {
 			type: 'GET', 
 			dataType: 'jsonp',
 			success: function(data) {
-				
+				loadScoreboard(data);
 			}
 		});
 });
 
 $('#game-selector').change(function(){
+	clearInterval(score_polling);
 	var gid = $(this).val();
+	var score_polling = setInterval(pollForScores(), 5000);
+	});
 });
 </script>
