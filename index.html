@@ -8,7 +8,7 @@
 </select>
 <div class="score row">
 	<div class="col-md-6 text-center away">
-		<img id="away-logo" class="logo" src="" />
+		<span id="away-logo" class="logo"></span>
 		<br/>
 		<span class="score" id="away-score">
 	</div>
@@ -48,7 +48,7 @@ var loadScoreboard = function(data) { //defined in jsonp
 }
 
 var playHorn = function(abbr) {
-	var horn = new Audio(abbr + ".ogg");
+	var horn = new Audio("audio/" + abbr + ".ogg");
 	horn.play();
 }
 
@@ -96,6 +96,10 @@ $(document).ready(function() {
 $('#game-selector').change(function(){
 	clearInterval(score_polling);
 	var gid = $(this).val();
+	var awayAbbr = $('#game-selector option:selected').data('away-abbr');
+	var homeAbbr = $('#game-selector option:selected').data('home-abbr');
+	$('#away-logo').html('<img src="images/' + awayAbbr + '.png" />');
+	$('#home-logo').html('<img src="images/' + homeAbbr + '.png" />');
 	var score_polling = setInterval(pollForScores(), 5000);
 	});
 });
