@@ -68,7 +68,7 @@ $.ajax({
 			}
 			if($('#home-score').is(':empty')) {
 				$('#home-score').text(homeScore);
-			} else if(awayScore > $('#away-score').text()) {
+			} else if(homeScore > $('#home-score').text()) {
 				playHorn($('#game-selector option:selected').data('home-abbr');
 				$('#home-score').text(homeScore);
 			}
@@ -98,8 +98,8 @@ $('#game-selector').change(function(){
 	var gid = $(this).val();
 	var awayAbbr = $('#game-selector option:selected').data('away-abbr');
 	var homeAbbr = $('#game-selector option:selected').data('home-abbr');
-	$('#away-logo').html('<img src="images/' + awayAbbr + '.png" />');
-	$('#home-logo').html('<img src="images/' + homeAbbr + '.png" />');
+	$('#away-logo').html('<img src="images/' + awayAbbr + '.gif" />');
+	$('#home-logo').html('<img src="images/' + homeAbbr + '.gif" />');
 	var score_polling = setInterval(pollForScores(), 5000);
 	});
 });
