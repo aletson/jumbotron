@@ -10,17 +10,18 @@
 	<div class="col-md-6 text-center away">
 		<span id="away-logo" class="logo"></span>
 		<br/>
-		<span class="score" id="away-score">
+		<span class="score" id="away-score"></span>
 	</div>
 	<div class="col-md-6 text-center home">
-		<img id="home-logo" class="logo" src="" />
+		<span id="home-logo" class="logo"></span>
 		<br/>
-		<span class="score" id="home-score">
+		<span class="score" id="home-score"></span>
 	</div>
 </div>
 
 <script>
 
+//Set up GC compat date
 var curDate = new Date();
 var day = curDate.getDate();
 var month = curDate.getMonth() + 1;
@@ -34,16 +35,18 @@ if(month > 6) {
 var loadScoreboard = function(data) { //defined in jsonp
     $.each(data.games, function(key, game) {
         var awayTeam = game.atcommon.toLowerCase();
-        var awayAbbr = game.ata;
+        var awayAbbr = game.ata.toLowerCase();
         var homeTeam = game.htcommon.toLowerCase();
-        var homeAbbr = game.hta;
+        var homeAbbr = game.hta.toLowerCase();
         var gid = game.id;
        $('#game-selector').append($('<option>', {
             value: gid,
+			id: gid,
 			//gosh, not having ucfirst is just the absolute worst isn't it
             text: awayTeam.charAt(0).toUpperCase() + awayTeam.slice(1) + ' @ ' + homeTeam.charAt(0).toUpperCase() + homeTeam.slice(1)
         }));
-		$('#' + gid).data('home-abbr', homeAbbr).data('away-abbr', awayAbbr); //won't show up in source, that's ok, working as intended
+		$('#' + gid).data('home-abbr', homeAbbr)
+		$('#' + gid).data('away-abbr', awayAbbr); //won't show up in source, that's ok, working as intended
     });
 }
 
@@ -54,26 +57,31 @@ var playHorn = function(abbr) {
 
 var pollForScores = function() {
 $.ajax({
-		url: 'http://live.nhle.com/GameData/' + seasonStr + '/' + $('#game-selector option:selected').id() + '/gc/gcsb.jsonp',
+		url: 'http://live.nhle.com/GameData/' + seasonStr + '/' + $('#game-selector option:selected').val() + '/gc/gcsb.jsonp',
 		type: 'GET',
 		dataType: 'jsonp',
-		success: function(data) {
-			data.a.tot.g = awayScore;
-			data.h.tot.g = homeScore;
-			if($('#away-score').is(':empty')) {
-				$('#away-score').text(awayScore);
-			} else if(awayScore > $('#away-score').text()) {
-				playHorn($('#game-selector option:selected').data('away-abbr');
-				$('#away-score').text(awayScore);
-			}
-			if($('#home-score').is(':empty')) {
-				$('#home-score').text(homeScore);
-			} else if(homeScore > $('#home-score').text()) {
-				playHorn($('#game-selector option:selected').data('home-abbr');
-				$('#home-score').text(homeScore);
-			}
-			
-		}
+		jsonpCallback: 'parseScores',
+		jsonp: 'false'
+	});
+}
+var GCSB = {
+	//TODO persistent attributes so that we don't have to go look at the page elements every time
+	load: function(data) {
+	awayScore = data.a.tot.g;
+	homeScore = data.h.tot.g;
+	if($('#away-score').is(':empty')) {
+		$('#away-score').text(awayScore);
+	} else if(awayScore > $('#away-score').text()) {
+		playHorn($('#game-selector option:selected').data('away-abbr'));
+		$('#away-score').text(awayScore);
+	}
+	if($('#home-score').is(':empty')) {
+		$('#home-score').text(homeScore);
+	} else if(homeScore > $('#home-score').text()) {
+		playHorn($('#game-selector option:selected').data('home-abbr'));
+		$('#home-score').text(homeScore);
+	}
+}
 }
 
 $(document).ready(function() {
@@ -100,7 +108,6 @@ $('#game-selector').change(function(){
 	var homeAbbr = $('#game-selector option:selected').data('home-abbr');
 	$('#away-logo').html('<img src="images/' + awayAbbr + '.gif" />');
 	$('#home-logo').html('<img src="images/' + homeAbbr + '.gif" />');
-	var score_polling = setInterval(pollForScores(), 5000);
-	});
+	var score_polling = setInterval(pollForScores, 5000);
 });
 </script>
