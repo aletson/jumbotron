@@ -6,5 +6,5 @@ Jumbotron is a quick jQuery-based app to play goal horns whenever an NHL team sc
 
 ## Limitations
 * Can't host on HTTPS due to the JSONP feeds not being available.
-* Vegas doesn't have a goal horn yet
+* Vegas (understandably) and Buffalo (not understandably) don't have a goal horn yet
 * Audio is only playing in Firefox, not Chrome.
