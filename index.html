@@ -71,14 +71,18 @@ var GCSB = {
 	homeScore = data.h.tot.g;
 	if($('#away-score').is(':empty')) {
 		$('#away-score').text(awayScore);
-	} else if(awayScore > $('#away-score').text()) {
-		playHorn($('#game-selector option:selected').data('away-abbr'));
+	} else if(awayScore != $('#away-score').text()) {
+		if(awayScore > $('#away-score').text()) {
+		  playHorn($('#game-selector option:selected').data('away-abbr'));
+		}
 		$('#away-score').text(awayScore);
 	}
 	if($('#home-score').is(':empty')) {
 		$('#home-score').text(homeScore);
-	} else if(homeScore > $('#home-score').text()) {
-		playHorn($('#game-selector option:selected').data('home-abbr'));
+	} else if(homeScore != $('#home-score').text()) {
+		if(homeScore > $('#home-score').text()) {
+		  playHorn($('#game-selector option:selected').data('home-abbr'));
+		}
 		$('#home-score').text(homeScore);
 	}
 }
